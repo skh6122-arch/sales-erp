@@ -21,7 +21,7 @@ app.use('/api/logs',      require('./routes/logs'));
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
 
 // 프론트엔드 정적 서빙
-const frontendPath = path.join(__dirname, '../frontend/public');
+const frontendPath = path.join(__dirname, 'frontend/public');
 app.use(express.static(frontendPath));
 app.get('*', (_req, res) => res.sendFile(path.join(frontendPath, 'index.html')));
 
