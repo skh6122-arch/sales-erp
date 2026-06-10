@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales ERP</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#f5f5f3;color:#1a1a1a;font-size:14px}
+.shell{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:200px;min-width:200px;background:#fff;border-right:0.5px solid rgba(0,0,0,.1);display:flex;flex-direction:column;overflow-y:auto}
+.logo{padding:16px;border-bottom:0.5px solid rgba(0,0,0,.1)}
+.logo h1{font-size:15px;font-weight:500}
+.logo span{font-size:11px;color:#888;display:block;margin-top:2px}
+.nav-sec{padding:12px 8px 4px;font-size:10px;font-weight:500;color:#aaa;letter-spacing:.5px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-radius:6px;margin:1px 4px;font-size:13px;color:#555;transition:all .15s}
+.nav-item:hover{background:#f0efea;color:#1a1a1a}
+.nav-item.active{background:#E6F1FB;color:#185FA5;font-weight:500}
+.nav-item i{font-size:16px}
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.topbar{padding:12px 20px;background:#fff;border-bottom:0.5px solid rgba(0,0,0,.1);display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-size:16px;font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.sel{padding:5px 10px;border:0.5px solid rgba(0,0,0,.2);border-radius:6px;font-size:12px;background:#fff;cursor:pointer}
+.btn{padding:6px 14px;border:0.5px solid rgba(0,0,0,.2);border-radius:6px;font-size:12px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s}
+.btn:hover{background:#f0efea}
+.btn.primary{background:#185FA5;color:#fff;border-color:#185FA5}
+.btn.primary:hover{background:#0C447C}
+.content{flex:1;overflow-y:auto;padding:20px}
+.view{display:none}
+.view.active{display:block}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+.mc{background:#f0efea;border-radius:8px;padding:14px 16px}
+.mc-label{font-size:11px;color:#666;margin-bottom:6px;font-weight:500}
+.mc-value{font-size:22px;font-weight:500;line-height:1}
+.mc-sub{font-size:11px;margin-top:5px}
+.mc-sub.up{color:#0F6E56}
+.mc-sub.down{color:#A32D2D}
+.mc-sub.nm{color:#888}
+.card{background:#fff;border:0.5px solid rgba(0,0,0,.1);border-radius:10px;padding:16px;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:500;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:8px 10px;border-bottom:0.5px solid rgba(0,0,0,.1);font-weight:500;color:#666;font-size:11px}
+td{padding:9px 10px;border-bottom:0.5px solid rgba(0,0,0,.06)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f9f9f7}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
+.badge.up{background:#E1F5EE;color:#0F6E56}
+.badge.down{background:#FCEBEB;color:#A32D2D}
+.badge.nm{background:#f0efea;color:#666}
+.badge.active{background:#E6F1FB;color:#185FA5}
+.badge.ended{background:#FCEBEB;color:#A32D2D}
+.badge.regular{background:#EEEDFE;color:#534AB7}
+.badge.season{background:#FAEEDA;color:#854F0B}
+.chart-wrap{position:relative;width:100%;height:220px}
+.log-item{padding:12px 0;border-bottom:0.5px solid rgba(0,0,0,.06);display:flex;gap:12px}
+.log-item:last-child{border-bottom:none}
+.avatar{width:32px;height:32px;min-width:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+.log-body{flex:1}
+.log-meta{font-size:11px;color:#888;margin-top:3px}
+.log-content{font-size:12px;margin-top:4px;line-height:1.5;color:#555}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal{background:#fff;border-radius:12px;padding:20px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:15px;font-weight:500;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;font-weight:500;color:#666;margin-bottom:5px;display:block}
+.form-input{width:100%;padding:7px 10px;border:0.5px solid rgba(0,0,0,.25);border-radius:6px;font-size:13px;background:#fff}
+.form-input:focus{outline:none;border-color:#378ADD;box-shadow:0 0 0 2px rgba(55,138,221,.15)}
+textarea.form-input{resize:vertical;min-height:80px;font-family:inherit}
+.progress-bar{height:5px;background:#f0efea;border-radius:3px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;border-radius:3px}
+.chip{padding:4px 12px;border:0.5px solid rgba(0,0,0,.15);border-radius:20px;font-size:12px;cursor:pointer;background:#fff;color:#666;transition:all .15s;display:inline-block;margin:2px}
+.chip.active{background:#185FA5;color:#fff;border-color:#185FA5}
+.empty{text-align:center;padding:40px;color:#999;font-size:13px}
+.loading{text-align:center;padding:40px;color:#999;font-size:13px}
+.rank-num{width:20px;height:20px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:500}
+.tabs{display:flex;gap:0;margin-bottom:16px;border-bottom:0.5px solid rgba(0,0,0,.1)}
+.tab{padding:8px 16px;cursor:pointer;font-size:13px;color:#666;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.active{color:#185FA5;border-bottom-color:#185FA5;font-weight:500}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="sidebar">
+    <div class="logo"><h1>Sales ERP</h1><span>영업 관리 시스템</span></div>
+    <div class="nav-sec">메인</div>
+    <div class="nav-item active" onclick="nav('dashboard',this)"><i class="ti ti-layout-dashboard"></i>대시보드</div>
+    <div class="nav-item" onclick="nav('performance',this)"><i class="ti ti-chart-bar"></i>팀장별 실적</div>
+    <div class="nav-sec">상품 관리</div>
+    <div class="nav-item" onclick="nav('products',this)"><i class="ti ti-package"></i>상품별 매출</div>
+    <div class="nav-item" onclick="nav('status',this)"><i class="ti ti-list-check"></i>관리상품 현황</div>
+    <div class="nav-sec">영업 활동</div>
+    <div class="nav-item" onclick="nav('logs',this)"><i class="ti ti-notebook"></i>활동 로그</div>
+    <div class="nav-item" onclick="nav('compare',this)"><i class="ti ti-arrows-exchange"></i>기간 비교</div>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <span class="topbar-title" id="topbar-title">📊 대시보드</span>
+      <div class="topbar-right">
+        <select class="sel" id="periodSel" onchange="onPeriodChange(this.value)">
+          <option value="2025-06">2025년 6월</option>
+          <option value="2025-05" selected>2025년 5월</option>
+          <option value="2025-04">2025년 4월</option>
+          <option value="2025-03">2025년 3월</option>
+        </select>
+        <button class="btn primary" onclick="openLogModal()"><i class="ti ti-plus"></i>활동 로그 입력</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- 대시보드 -->
+      <div id="view-dashboard" class="view active">
+        <div class="g4" id="db-metrics"><div class="loading">데이터 불러오는 중...</div></div>
+        <div class="g2">
+          <div class="card"><div class="card-title"><span>📈 월별 매출 추이</span></div><div class="chart-wrap"><canvas id="trendChart"></canvas></div></div>
+          <div class="card"><div class="card-title"><span>🍩 상품 유형별 비중</span></div><div class="chart-wrap"><canvas id="typeChart"></canvas></div></div>
+        </div>
+        <div class="card"><div class="card-title"><span>🏆 팀장별 실적 순위</span></div><table><thead><tr><th>순위</th><th>팀장</th><th>팀</th><th>당월 매출</th><th>전월 대비</th><th>전년 대비</th><th>목표 달성률</th></tr></thead><tbody id="rank-table"></tbody></table></div>
+      </div>
+
+      <!-- 팀장별 실적 -->
+      <div id="view-performance" class="view">
+        <div id="perf-filter" style="margin-bottom:16px"></div>
+        <div id="perf-detail"></div>
+      </div>
+
+      <!-- 상품별 매출 -->
+      <div id="view-products" class="view">
+        <div style="margin-bottom:12px">
+          <span class="chip active" onclick="filterProd('all',this)">전체</span>
+          <span class="chip" onclick="filterProd('regular',this)">상시</span>
+          <span class="chip" onclick="filterProd('season',this)">시즌</span>
+          <span class="chip" onclick="filterProd('ended',this)">종료</span>
+        </div>
+        <div class="card"><div class="card-title"><span>📦 상품별 매출 현황</span></div><table><thead><tr><th>상품명</th><th>구분</th><th>상태</th><th>당월 매출</th><th>전월 대비</th><th>전년 대비</th><th>누적</th></tr></thead><tbody id="prod-table"></tbody></table></div>
+      </div>
+
+      <!-- 관리상품 현황 -->
+      <div id="view-status" class="view">
+        <div class="g3" id="status-metrics"></div>
+        <div class="card"><div class="card-title"><span>📋 관리상품 유지 현황</span></div><table><thead><tr><th>상품명</th><th>구분</th><th>담당</th><th>계약기간</th><th>상태</th><th>미발생 예상액</th></tr></thead><tbody id="status-table"></tbody></table></div>
+      </div>
+
+      <!-- 활동 로그 -->
+      <div id="view-logs" class="view">
+        <div style="margin-bottom:12px" id="log-filter">
+          <span class="chip active" onclick="filterLog('all',this)">전체</span>
+          <span class="chip" onclick="filterLog('미팅',this)">미팅</span>
+          <span class="chip" onclick="filterLog('전화',this)">전화</span>
+          <span class="chip" onclick="filterLog('제안',this)">제안</span>
+          <span class="chip" onclick="filterLog('계약',this)">계약</span>
+          <span class="chip" onclick="filterLog('기타',this)">기타</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <select class="sel" id="log-mgr-filter" onchange="loadLogs()" style="width:160px"></select>
+          <input type="month" class="sel" id="log-month-filter" onchange="loadLogs()" style="width:160px">
+        </div>
+        <div class="card" id="log-list"></div>
+      </div>
+
+      <!-- 기간 비교 -->
+      <div id="view-compare" class="view">
+        <div class="g2">
+          <div class="card"><div class="card-title"><span>📊 전월 대비 (MoM)</span></div><div class="chart-wrap"><canvas id="momChart"></canvas></div></div>
+          <div class="card"><div class="card-title"><span>📊 전년 대비 (YoY)</span></div><div class="chart-wrap"><canvas id="yoyChart"></canvas></div></div>
+        </div>
+        <div class="card"><div class="card-title"><span>📋 팀장별 기간 비교</span></div><table><thead><tr><th>팀장</th><th>전월</th><th>당월</th><th>MoM</th><th>전년동월</th><th>YoY</th><th>달성률</th></tr></thead><tbody id="compare-table"></tbody></table></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 활동 로그 입력 모달 -->
+<div class="modal-overlay" id="logModal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal">
+    <div class="modal-title"><span>📝 영업 활동 로그 입력</span><span style="cursor:pointer;font-size:18px;color:#888" onclick="document.getElementById('logModal').style.display='none'">✕</span></div>
+    <div class="form-group"><label class="form-label">담당 팀장</label><select class="form-input" id="log_manager_id"></select></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div><label class="form-label">활동일자</label><input type="date" class="form-input" id="log_date"></div>
+      <div><label class="form-label">활동 유형</label><select class="form-input" id="log_type"><option>미팅</option><option>전화</option><option>제안</option><option>계약</option><option>기타</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">고객사</label><input type="text" class="form-input" id="log_client" placeholder="고객사명"></div>
+    <div class="form-group"><label class="form-label">관련 상품</label><select class="form-input" id="log_product_id"></select></div>
+    <div class="form-group"><label class="form-label">활동 내용</label><textarea class="form-input" id="log_content" placeholder="활동 내용을 입력하세요..."></textarea></div>
+    <div class="form-group"><label class="form-label">다음 액션</label><input type="text" class="form-input" id="log_next" placeholder="예: 다음주 제안서 발송"></div>
+    <div class="form-group"><label class="form-label">예상 매출 (만원)</label><input type="number" class="form-input" id="log_amount" placeholder="0"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn" onclick="document.getElementById('logModal').style.display='none'">취소</button>
+      <button class="btn primary" onclick="saveLog()"><i class="ti ti-check"></i> 저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:3000/api';
+let currentPeriod = '2025-05';
+let prodFilter = 'all';
+let logTypeFilter = 'all';
+let charts = {};
+let managers = [];
+let products = [];
+
+async function apiFetch(path) {
+  try {
+    const r = await fetch(API + path);
+    const d = await r.json();
+    return d.success ? d : null;
+  } catch(e) { console.error(e); return null; }
+}
+
+async function apiPost(path, body) {
+  try {
+    const r = await fetch(API + path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    return await r.json();
+  } catch(e) { console.error(e); return null; }
+}
+
+// 네비게이션
+const titles = { dashboard:'📊 대시보드', performance:'📈 팀장별 실적', products:'📦 상품별 매출', status:'📋 관리상품 현황', logs:'📝 영업 활동 로그', compare:'🔄 기간 비교' };
+function nav(view, el) {
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('view-'+view).classList.add('active');
+  document.getElementById('topbar-title').textContent = titles[view];
+  if(view==='dashboard')   loadDashboard();
+  if(view==='performance') loadPerformance();
+  if(view==='products')    loadProducts();
+  if(view==='status')      loadStatus();
+  if(view==='logs')        loadLogs();
+  if(view==='compare')     loadCompare();
+}
+
+function onPeriodChange(v) { currentPeriod = v; loadDashboard(); }
+
+function fmt(n) { return n >= 10000 ? (n/10000).toFixed(1)+'억' : (n/1000).toFixed(1)+'천만'; }
+function rateBadge(cur, prev) {
+  if (!prev) return '<span class="badge nm">-</span>';
+  const d = ((cur-prev)/prev*100).toFixed(1);
+  return d >= 0 ? `<span class="badge up">▲${d}%</span>` : `<span class="badge down">▼${Math.abs(d)}%</span>`;
+}
+
+// ── 대시보드 ──────────────────────────────────────────────────
+async function loadDashboard() {
+  const res = await apiFetch(`/sales/dashboard?period=${currentPeriod}`);
+  if (!res) return;
+  const { summary, managers: mgrs, trend, byType } = res.data;
+
+  document.getElementById('db-metrics').innerHTML = `
+    <div class="mc"><div class="mc-label">당월 총 매출</div><div class="mc-value">₩${fmt(summary.total_current)}</div><div class="mc-sub ${summary.mom_rate>=0?'up':'down'}">${summary.mom_rate>=0?'▲':'▼'}${Math.abs(summary.mom_rate)}% 전월 대비</div></div>
+    <div class="mc"><div class="mc-label">전년 동월 대비</div><div class="mc-value">${summary.yoy_rate>=0?'+':''}${summary.yoy_rate}%</div><div class="mc-sub nm">전년 ₩${fmt(summary.total_yoy)}</div></div>
+    <div class="mc"><div class="mc-label">관리상품 유지율</div><div class="mc-value">${summary.maintain_rate}%</div><div class="mc-sub nm">${summary.active_count}/${summary.total_count}개 유지</div></div>
+    <div class="mc"><div class="mc-label">종료상품 미발생분</div><div class="mc-value">₩${fmt(summary.total_missed)}</div><div class="mc-sub down">${summary.missed_count}건 종료</div></div>
+  `;
+
+  // 순위 테이블
+  document.getElementById('rank-table').innerHTML = mgrs.map((m,i) => `
+    <tr>
+      <td><span class="rank-num">${i+1}</span></td>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="background:${m.bg_color};color:${m.color}">${m.name.slice(0,2)}</div>${m.name}</div></td>
+      <td>${m.team}</td>
+      <td style="font-weight:500">₩${fmt(m.current_sales)}</td>
+      <td>${rateBadge(m.current_sales, m.prev_sales)}</td>
+      <td>${rateBadge(m.current_sales, m.yoy_sales)}</td>
+      <td><div style="min-width:100px"><div style="font-size:11px;margin-bottom:2px">${m.target?(m.current_sales/m.target*100).toFixed(0):0}%</div><div class="progress-bar"><div class="progress-fill" style="width:${m.target?Math.min(m.current_sales/m.target*100,100):0}%;background:${m.color}"></div></div></div></td>
+    </tr>`).join('');
+
+  // 추이 차트
+  if (charts.trend) charts.trend.destroy();
+  charts.trend = new Chart(document.getElementById('trendChart'), {
+    type:'line',
+    data:{ labels: trend.map(t=>t.period.slice(5)+'월'), datasets:[{ label:'매출', data: trend.map(t=>t.total/10000), borderColor:'#378ADD', backgroundColor:'rgba(55,138,221,.08)', fill:true, tension:.35, pointRadius:3 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{callback:v=>v+'억'}, grid:{color:'rgba(0,0,0,.05)'}}}}
+  });
+
+  // 유형별 차트
+  if (charts.type) charts.type.destroy();
+  const regularTotal = byType.find(b=>b.type==='regular')?.total || 0;
+  const seasonTotal  = byType.find(b=>b.type==='season')?.total  || 0;
+  charts.type = new Chart(document.getElementById('typeChart'), {
+    type:'doughnut',
+    data:{ labels:['상시 상품','시즌 상품'], datasets:[{ data:[regularTotal, seasonTotal], backgroundColor:['#378ADD','#EF9F27'], borderWidth:2, borderColor:'#fff'}]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}}, cutout:'60%'}
+  });
+}
+
+// ── 팀장별 실적 ──────────────────────────────────────────────
+async function loadPerformance() {
+  if (!managers.length) {
+    const res = await apiFetch(`/managers?period=${currentPeriod}`);
+    if (res) managers = res.data;
+  }
+  const f = document.getElementById('perf-filter');
+  f.innerHTML = managers.map((m,i) => `<span class="chip${i===0?' active':''}" onclick="showMgrDetail(${m.id},this)">${m.name} (${m.team})</span>`).join('');
+  if (managers.length) showMgrDetail(managers[0].id, f.children[0]);
+}
+
+async function showMgrDetail(id, el) {
+  document.querySelectorAll('#perf-filter .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  const res = await apiFetch(`/managers/${id}`);
+  if (!res) return;
+  const m = res.data;
+  const sm = managers.find(x=>x.id===id) || {};
+  const mom = sm.prev_sales ? ((sm.current_sales-sm.prev_sales)/sm.prev_sales*100).toFixed(1) : null;
+  const yoy = sm.yoy_sales  ? ((sm.current_sales-sm.yoy_sales) /sm.yoy_sales *100).toFixed(1) : null;
+  const rate = sm.target ? (sm.current_sales/sm.target*100).toFixed(0) : 0;
+  document.getElementById('perf-detail').innerHTML = `
+    <div class="g4" style="margin-bottom:16px">
+      <div class="mc"><div class="mc-label">당월 매출</div><div class="mc-value">₩${fmt(sm.current_sales||0)}</div><div class="mc-sub ${mom>=0?'up':'down'}">${mom!==null?(mom>=0?'▲':'▼')+Math.abs(mom)+'% 전월대비':'데이터없음'}</div></div>
+      <div class="mc"><div class="mc-label">목표 달성률</div><div class="mc-value">${rate}%</div><div class="mc-sub nm">목표 ₩${fmt(sm.target||0)}</div></div>
+      <div class="mc"><div class="mc-label">전년 대비</div><div class="mc-value">${yoy!==null?(yoy>=0?'+':'')+yoy+'%':'–'}</div><div class="mc-sub nm">전년 ₩${fmt(sm.yoy_sales||0)}</div></div>
+      <div class="mc"><div class="mc-label">이달 활동</div><div class="mc-value">${m.logs.length}건</div><div class="mc-sub nm">계약 ${m.logs.filter(l=>l.type==='계약').length}건</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span style="color:${m.color||'#378ADD'}">${m.name}</span> 활동 로그</div>
+      ${m.logs.length ? m.logs.map(logItem).join('') : '<div class="empty">등록된 활동 로그가 없습니다</div>'}
+    </div>`;
+}
+
+// ── 상품별 매출 ──────────────────────────────────────────────
+async function loadProducts() {
+  const params = prodFilter==='all' ? '' : prodFilter==='ended' ? '?status=ended' : `?type=${prodFilter}`;
+  const res = await apiFetch(`/products${params}&period=${currentPeriod}`);
+  if (!res) return;
+  document.getElementById('prod-table').innerHTML = res.data.map(p => `
+    <tr>
+      <td style="font-weight:500">${p.name}</td>
+      <td><span class="badge ${p.type}">${p.type==='regular'?'상시':'시즌'}</span></td>
+      <td><span class="badge ${p.status}">${p.status==='active'?'유지':'종료'}</span></td>
+      <td>${p.current_sales ? '₩'+fmt(p.current_sales) : '–'}</td>
+      <td>${rateBadge(p.current_sales, p.prev_sales)}</td>
+      <td>${rateBadge(p.current_sales, p.yoy_sales)}</td>
+      <td>₩${fmt(p.cumulative_sales)}</td>
+    </tr>`).join('');
+}
+
+function filterProd(f, el) {
+  document.querySelectorAll('[onclick^="filterProd"]').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  prodFilter = f;
+  loadProducts();
+}
+
+// ── 관리상품 현황 ────────────────────────────────────────────
+async function loadStatus() {
+  const [pRes, mRes] = await Promise.all([
+    apiFetch(`/products?period=${currentPeriod}`),
+    apiFetch(`/sales/missed?period=${currentPeriod}`)
+  ]);
+  if (!pRes) return;
+  const prods = pRes.data;
+  const active = prods.filter(p=>p.status==='active').length;
+  const ended  = prods.filter(p=>p.status==='ended').length;
+  const totalMissed = mRes ? mRes.total : 0;
+
+  document.getElementById('status-metrics').innerHTML = `
+    <div class="mc"><div class="mc-label">전체 관리상품</div><div class="mc-value">${prods.length}건</div><div class="mc-sub nm">상시 ${prods.filter(p=>p.type==='regular').length} / 시즌 ${prods.filter(p=>p.type==='season').length}</div></div>
+    <div class="mc"><div class="mc-label">이번달 종료</div><div class="mc-value" style="color:#A32D2D">${ended}건</div><div class="mc-sub down">미발생 ₩${fmt(totalMissed)}</div></div>
+    <div class="mc"><div class="mc-label">유지 중</div><div class="mc-value" style="color:#0F6E56">${active}건</div><div class="mc-sub up">유지율 ${prods.length?(active/prods.length*100).toFixed(0):0}%</div></div>
+  `;
+
+  document.getElementById('status-table').innerHTML = prods.map(p => `
+    <tr>
+      <td style="font-weight:500">${p.name}</td>
+      <td><span class="badge ${p.type}">${p.type==='regular'?'상시':'시즌'}</span></td>
+      <td>${p.manager_name||'–'}</td>
+      <td style="font-size:11px;color:#666">${p.start_date||'–'} ~ ${p.end_date||'–'}</td>
+      <td><span class="badge ${p.status}">${p.status==='active'?'유지':'종료'}</span></td>
+      <td>${p.status==='ended'&&mRes?(() => { const m=mRes.data.find(r=>r.product_id===p.id); return m?`<span style="color:#A32D2D;font-weight:500">₩${fmt(m.expected_amount)}</span>`:'–'; })():'–'}</td>
+    </tr>`).join('');
+}
+
+// ── 활동 로그 ────────────────────────────────────────────────
+async function loadLogs() {
+  // 팀장 필터 옵션 초기화
+  const mgrSel = document.getElementById('log-mgr-filter');
+  if (mgrSel.options.length <= 1) {
+    const res = await apiFetch('/managers');
+    if (res) res.data.forEach(m => {
+      const o = document.createElement('option');
+      o.value = m.id; o.textContent = m.name+' ('+m.team+')';
+      mgrSel.appendChild(o);
+    });
+    if (!mgrSel.options[0] || mgrSel.options[0].value !== '') {
+      const o = document.createElement('option'); o.value=''; o.textContent='전체 팀장';
+      mgrSel.insertBefore(o, mgrSel.options[0]);
+    }
+  }
+
+  const mgr   = document.getElementById('log-mgr-filter').value;
+  const month = document.getElementById('log-month-filter').value;
+  let url = '/logs?limit=50';
+  if (logTypeFilter !== 'all') url += `&type=${logTypeFilter}`;
+  if (mgr)   url += `&manager_id=${mgr}`;
+  if (month) url += `&month=${month}`;
+
+  const res = await apiFetch(url);
+  const c = document.getElementById('log-list');
+  if (!res || !res.data.length) { c.innerHTML = '<div class="empty">등록된 활동 로그가 없습니다</div>'; return; }
+  c.innerHTML = res.data.map(logItem).join('');
+}
+
+function filterLog(f, el) {
+  document.querySelectorAll('#log-filter .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  logTypeFilter = f;
+  loadLogs();
+}
+
+function logItem(l) {
+  const typeColor = { 미팅:'#E6F1FB|#185FA5', 전화:'#E1F5EE|#0F6E56', 제안:'#EEEDFE|#534AB7', 계약:'#EAF3DE|#3B6D11', 기타:'#f0efea|#666' };
+  const [tbg, tc] = (typeColor[l.type]||'#f0efea|#666').split('|');
+  return `<div class="log-item">
+    <div class="avatar" style="background:${l.manager_bg||'#E6F1FB'};color:${l.manager_color||'#185FA5'}">${(l.manager_name||'').slice(0,2)}</div>
+    <div class="log-body">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <strong style="font-size:13px">${l.manager_name||''}</strong>
+        ${l.manager_team?`<span class="badge nm">${l.manager_team}</span>`:''}
+        <span style="background:${tbg};color:${tc};font-size:10px;padding:2px 7px;border-radius:3px;font-weight:500">${l.type}</span>
+        ${l.expected_amount?`<span style="font-size:11px;color:#0F6E56;font-weight:500">₩${fmt(l.expected_amount)} 예상</span>`:''}
+      </div>
+      <div class="log-meta">${l.activity_date} | ${l.client} ${l.product_name?'| '+l.product_name:''}</div>
+      <div class="log-content">${l.content}</div>
+      ${l.next_action?`<div style="font-size:11px;color:#378ADD;margin-top:4px">→ ${l.next_action}</div>`:''}
+    </div>
+  </div>`;
+}
+
+// ── 기간 비교 ────────────────────────────────────────────────
+async function loadCompare() {
+  const res = await apiFetch(`/sales/compare?period=${currentPeriod}`);
+  if (!res) return;
+  const data = res.data;
+  const names = data.map(m=>m.name);
+  const momData = data.map(m => m.mom_rate !== null ? parseFloat(m.mom_rate) : 0);
+  const yoyData = data.map(m => m.yoy_rate !== null ? parseFloat(m.yoy_rate) : 0);
+
+  if (charts.mom) charts.mom.destroy();
+  if (charts.yoy) charts.yoy.destroy();
+  charts.mom = new Chart(document.getElementById('momChart'), { type:'bar', data:{ labels:names, datasets:[{ data:momData, backgroundColor:momData.map(v=>v>=0?'rgba(29,158,117,.7)':'rgba(162,45,45,.7)'), borderRadius:4 }]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{callback:v=>v+'%'}, grid:{color:'rgba(0,0,0,.05)'}}}}});
+  charts.yoy = new Chart(document.getElementById('yoyChart'), { type:'bar', data:{ labels:names, datasets:[{ data:yoyData, backgroundColor:yoyData.map(v=>v>=0?'rgba(55,138,221,.7)':'rgba(162,45,45,.7)'), borderRadius:4 }]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{callback:v=>v+'%'}, grid:{color:'rgba(0,0,0,.05)'}}}}});
+
+  document.getElementById('compare-table').innerHTML = data.map(m => `
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="background:${m.bg_color};color:${m.color};width:24px;height:24px;font-size:9px">${m.name.slice(0,2)}</div>${m.name} (${m.team})</div></td>
+      <td>₩${fmt(m.prev_sales)}</td>
+      <td style="font-weight:500">₩${fmt(m.current_sales)}</td>
+      <td>${rateBadge(m.current_sales, m.prev_sales)}</td>
+      <td>₩${fmt(m.yoy_sales)}</td>
+      <td>${rateBadge(m.current_sales, m.yoy_sales)}</td>
+      <td>${m.achieve_rate ? m.achieve_rate+'%' : '–'}</td>
+    </tr>`).join('');
+}
+
+// ── 로그 저장 ────────────────────────────────────────────────
+async function openLogModal() {
+  // 팀장/상품 목록 로드
+  const [mRes, pRes] = await Promise.all([apiFetch('/managers'), apiFetch('/products')]);
+  if (mRes) {
+    document.getElementById('log_manager_id').innerHTML = mRes.data.map(m=>`<option value="${m.id}">${m.name} (${m.team})</option>`).join('');
+  }
+  if (pRes) {
+    document.getElementById('log_product_id').innerHTML = '<option value="">상품 선택</option>' + pRes.data.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  }
+  document.getElementById('log_date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('logModal').style.display = 'flex';
+}
+
+async function saveLog() {
+  const body = {
+    manager_id:      Number(document.getElementById('log_manager_id').value),
+    product_id:      Number(document.getElementById('log_product_id').value) || null,
+    activity_date:   document.getElementById('log_date').value,
+    type:            document.getElementById('log_type').value,
+    client:          document.getElementById('log_client').value,
+    content:         document.getElementById('log_content').value,
+    next_action:     document.getElementById('log_next').value,
+    expected_amount: Number(document.getElementById('log_amount').value) || 0,
+  };
+  if (!body.client || !body.content) { alert('고객사와 활동 내용은 필수입니다.'); return; }
+  const res = await apiPost('/logs', body);
+  if (res && res.success) {
+    document.getElementById('logModal').style.display = 'none';
+    document.getElementById('log_client').value = '';
+    document.getElementById('log_content').value = '';
+    document.getElementById('log_next').value = '';
+    document.getElementById('log_amount').value = '';
+    alert('✅ 활동 로그가 저장됐습니다!');
+    if (document.getElementById('view-logs').classList.contains('active')) loadLogs();
+  } else { alert('저장 실패. 다시 시도해주세요.'); }
+}
+
+// 초기 로드
+loadDashboard();
+</script>
+</body>
+</html>

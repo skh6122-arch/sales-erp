@@ -1,0 +1,609 @@
+{
+  "managers": [
+    {
+      "id": 1,
+      "name": "조아라",
+      "team": "부산2",
+      "color": "#378ADD",
+      "bg_color": "#E6F1FB",
+      "target": 10000,
+      "is_active": true,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 2,
+      "name": "전인호",
+      "team": "부산3",
+      "color": "#1D9E75",
+      "bg_color": "#E1F5EE",
+      "target": 9000,
+      "is_active": true,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 3,
+      "name": "손광훈",
+      "team": "부산4",
+      "color": "#534AB7",
+      "bg_color": "#EEEDFE",
+      "target": 8000,
+      "is_active": true,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 4,
+      "name": "김보라",
+      "team": "서울2",
+      "color": "#D85A30",
+      "bg_color": "#FAECE7",
+      "target": 8500,
+      "is_active": true,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 5,
+      "name": "김형준",
+      "team": "서울3",
+      "color": "#BA7517",
+      "bg_color": "#FAEEDA",
+      "target": 9500,
+      "is_active": true,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "프리미엄 패키지 A",
+      "type": "regular",
+      "status": "active",
+      "manager_id": 1,
+      "start_date": "2024-01",
+      "end_date": "2025-12"
+    },
+    {
+      "id": 2,
+      "name": "스탠다드 패키지 B",
+      "type": "regular",
+      "status": "active",
+      "manager_id": 2,
+      "start_date": "2024-03",
+      "end_date": "2025-08"
+    },
+    {
+      "id": 3,
+      "name": "베이직 패키지 C",
+      "type": "regular",
+      "status": "active",
+      "manager_id": 3,
+      "start_date": "2024-06",
+      "end_date": "2025-06"
+    },
+    {
+      "id": 4,
+      "name": "기업 전용 D",
+      "type": "regular",
+      "status": "active",
+      "manager_id": 4,
+      "start_date": "2023-10",
+      "end_date": "2025-10"
+    },
+    {
+      "id": 5,
+      "name": "여름 특가 E",
+      "type": "season",
+      "status": "active",
+      "manager_id": 5,
+      "start_date": "2025-05",
+      "end_date": "2025-07"
+    },
+    {
+      "id": 6,
+      "name": "상반기 프로모션 F",
+      "type": "season",
+      "status": "active",
+      "manager_id": 1,
+      "start_date": "2025-01",
+      "end_date": "2025-06"
+    },
+    {
+      "id": 7,
+      "name": "신년 패키지 G",
+      "type": "season",
+      "status": "ended",
+      "manager_id": 2,
+      "start_date": "2025-01",
+      "end_date": "2025-04"
+    },
+    {
+      "id": 8,
+      "name": "봄 특집 H",
+      "type": "season",
+      "status": "ended",
+      "manager_id": 3,
+      "start_date": "2025-03",
+      "end_date": "2025-05"
+    },
+    {
+      "id": 9,
+      "name": "겨울 한정 I",
+      "type": "regular",
+      "status": "ended",
+      "manager_id": 4,
+      "start_date": "2024-11",
+      "end_date": "2025-04"
+    }
+  ],
+  "monthly_sales": [
+    {
+      "id": 1,
+      "period": "2024-12",
+      "manager_id": 1,
+      "product_id": 1,
+      "amount": 8800,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 2,
+      "period": "2024-12",
+      "manager_id": 2,
+      "product_id": 2,
+      "amount": 8200,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 3,
+      "period": "2024-12",
+      "manager_id": 3,
+      "product_id": 3,
+      "amount": 7000,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 4,
+      "period": "2024-12",
+      "manager_id": 4,
+      "product_id": 4,
+      "amount": 7100,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 5,
+      "period": "2024-12",
+      "manager_id": 5,
+      "product_id": 5,
+      "amount": 8600,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 6,
+      "period": "2024-12",
+      "manager_id": 1,
+      "product_id": 6,
+      "amount": 3800,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 7,
+      "period": "2024-12",
+      "manager_id": 2,
+      "product_id": 7,
+      "amount": 3200,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 8,
+      "period": "2025-01",
+      "manager_id": 1,
+      "product_id": 1,
+      "amount": 9000,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 9,
+      "period": "2025-01",
+      "manager_id": 2,
+      "product_id": 2,
+      "amount": 8400,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 10,
+      "period": "2025-01",
+      "manager_id": 3,
+      "product_id": 3,
+      "amount": 7200,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 11,
+      "period": "2025-01",
+      "manager_id": 4,
+      "product_id": 4,
+      "amount": 7200,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 12,
+      "period": "2025-01",
+      "manager_id": 5,
+      "product_id": 5,
+      "amount": 8700,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 13,
+      "period": "2025-01",
+      "manager_id": 1,
+      "product_id": 6,
+      "amount": 4100,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 14,
+      "period": "2025-01",
+      "manager_id": 2,
+      "product_id": 7,
+      "amount": 3200,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 15,
+      "period": "2025-02",
+      "manager_id": 1,
+      "product_id": 1,
+      "amount": 8500,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 16,
+      "period": "2025-02",
+      "manager_id": 2,
+      "product_id": 2,
+      "amount": 8000,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 17,
+      "period": "2025-02",
+      "manager_id": 3,
+      "product_id": 3,
+      "amount": 6800,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 18,
+      "period": "2025-02",
+      "manager_id": 4,
+      "product_id": 4,
+      "amount": 7000,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 19,
+      "period": "2025-02",
+      "manager_id": 5,
+      "product_id": 5,
+      "amount": 8400,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 20,
+      "period": "2025-02",
+      "manager_id": 1,
+      "product_id": 6,
+      "amount": 4200,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 21,
+      "period": "2025-03",
+      "manager_id": 1,
+      "product_id": 1,
+      "amount": 9200,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 22,
+      "period": "2025-03",
+      "manager_id": 2,
+      "product_id": 2,
+      "amount": 8800,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 23,
+      "period": "2025-03",
+      "manager_id": 3,
+      "product_id": 3,
+      "amount": 7400,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 24,
+      "period": "2025-03",
+      "manager_id": 4,
+      "product_id": 4,
+      "amount": 7600,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 25,
+      "period": "2025-03",
+      "manager_id": 5,
+      "product_id": 5,
+      "amount": 9000,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 26,
+      "period": "2025-03",
+      "manager_id": 1,
+      "product_id": 6,
+      "amount": 4500,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 27,
+      "period": "2025-03",
+      "manager_id": 3,
+      "product_id": 8,
+      "amount": 1800,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 28,
+      "period": "2025-04",
+      "manager_id": 1,
+      "product_id": 1,
+      "amount": 9100,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 29,
+      "period": "2025-04",
+      "manager_id": 2,
+      "product_id": 2,
+      "amount": 8600,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 30,
+      "period": "2025-04",
+      "manager_id": 3,
+      "product_id": 3,
+      "amount": 7600,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 31,
+      "period": "2025-04",
+      "manager_id": 4,
+      "product_id": 4,
+      "amount": 7800,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 32,
+      "period": "2025-04",
+      "manager_id": 5,
+      "product_id": 5,
+      "amount": 8800,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 33,
+      "period": "2025-04",
+      "manager_id": 1,
+      "product_id": 6,
+      "amount": 5100,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 34,
+      "period": "2025-04",
+      "manager_id": 2,
+      "product_id": 7,
+      "amount": 3200,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 35,
+      "period": "2025-04",
+      "manager_id": 3,
+      "product_id": 8,
+      "amount": 1800,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 36,
+      "period": "2025-04",
+      "manager_id": 4,
+      "product_id": 9,
+      "amount": 2200,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 37,
+      "period": "2025-05",
+      "manager_id": 1,
+      "product_id": 1,
+      "amount": 9200,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 38,
+      "period": "2025-05",
+      "manager_id": 2,
+      "product_id": 2,
+      "amount": 8700,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 39,
+      "period": "2025-05",
+      "manager_id": 3,
+      "product_id": 3,
+      "amount": 7500,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 40,
+      "period": "2025-05",
+      "manager_id": 4,
+      "product_id": 4,
+      "amount": 7800,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 41,
+      "period": "2025-05",
+      "manager_id": 5,
+      "product_id": 5,
+      "amount": 9800,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 42,
+      "period": "2025-05",
+      "manager_id": 1,
+      "product_id": 6,
+      "amount": 4200,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    }
+  ],
+  "activity_logs": [
+    {
+      "id": 1,
+      "manager_id": 1,
+      "product_id": 1,
+      "activity_date": "2025-05-28",
+      "type": "미팅",
+      "client": "(주)테크솔루션",
+      "content": "분기 계약 갱신 미팅. 추가 계약 의향 확인, 유지 확정.",
+      "next_action": "다음달 추가계약 상담 예정",
+      "expected_amount": 1500,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 2,
+      "manager_id": 2,
+      "product_id": 2,
+      "activity_date": "2025-05-27",
+      "type": "제안",
+      "client": "글로벌(주)",
+      "content": "신규 패키지 제안서 발송. 긍정적 반응, 추가 질문 있음.",
+      "next_action": "이번주 내 전화 팔로업",
+      "expected_amount": 900,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 3,
+      "manager_id": 5,
+      "product_id": 5,
+      "activity_date": "2025-05-25",
+      "type": "계약",
+      "client": "비즈니스파트너(주)",
+      "content": "시즌 특가 패키지 계약 완료. 3개월 약정.",
+      "next_action": "서비스 온보딩 안내 예정",
+      "expected_amount": 1950,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 4,
+      "manager_id": 3,
+      "product_id": 3,
+      "activity_date": "2025-05-24",
+      "type": "전화",
+      "client": "미래산업(주)",
+      "content": "계약 만료 관련 전화. 고객사 예산 문제로 갱신 어려움 표명.",
+      "next_action": "2주 내 재연락 예정",
+      "expected_amount": 0,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 5,
+      "manager_id": 4,
+      "product_id": 4,
+      "activity_date": "2025-05-22",
+      "type": "미팅",
+      "client": "코리아엔터프라이즈",
+      "content": "기업 전용 서비스 추가 확장 미팅. 2개 부서 추가 도입 논의.",
+      "next_action": "제안서 작성 후 발송",
+      "expected_amount": 2200,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 6,
+      "manager_id": 1,
+      "product_id": 6,
+      "activity_date": "2025-05-20",
+      "type": "기타",
+      "client": "내부 미팅",
+      "content": "월간 영업 전략 회의 참석. 신규 타겟 고객군 발굴 계획 수립.",
+      "next_action": "다음주 첫 콜드콜 실시",
+      "expected_amount": 0,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 7,
+      "manager_id": 2,
+      "product_id": 2,
+      "activity_date": "2025-05-15",
+      "type": "전화",
+      "client": "스마트솔루션(주)",
+      "content": "기존 고객 만족도 확인 전화. 추가 니즈 발굴.",
+      "next_action": "제안서 준비",
+      "expected_amount": 800,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 8,
+      "manager_id": 5,
+      "product_id": 5,
+      "activity_date": "2025-05-10",
+      "type": "제안",
+      "client": "퓨처테크(주)",
+      "content": "여름 특가 상품 제안. 경쟁사 대비 가격 비교 요청.",
+      "next_action": "가격 비교표 발송",
+      "expected_amount": 600,
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    }
+  ],
+  "missed_revenue": [
+    {
+      "id": 1,
+      "product_id": 7,
+      "manager_id": 2,
+      "period": "2025-05",
+      "expected_amount": 3200,
+      "reason": "신년 패키지 계약 종료",
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 2,
+      "product_id": 8,
+      "manager_id": 3,
+      "period": "2025-05",
+      "expected_amount": 1800,
+      "reason": "봄 특집 시즌 종료",
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    },
+    {
+      "id": 3,
+      "product_id": 9,
+      "manager_id": 4,
+      "period": "2025-05",
+      "expected_amount": 2200,
+      "reason": "겨울 한정 계약 종료",
+      "created_at": "2026. 6. 8. 오후 3:04:42"
+    }
+  ],
+  "_seq": {
+    "managers": 5,
+    "products": 9,
+    "monthly_sales": 42,
+    "activity_logs": 8,
+    "missed_revenue": 3
+  }
+}
