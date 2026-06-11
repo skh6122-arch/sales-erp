@@ -18,6 +18,7 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#f5
 .nav-item{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-radius:6px;margin:1px 4px;font-size:13px;color:#555;transition:all .15s}
 .nav-item:hover{background:#f0efea;color:#1a1a1a}
 .nav-item.active{background:#E6F1FB;color:#185FA5;font-weight:500}
+.nav-item.admin-item.active{background:#FEF3E2;color:#854F0B}
 .nav-item i{font-size:16px}
 .main{flex:1;overflow:hidden;display:flex;flex-direction:column}
 .topbar{padding:12px 20px;background:#fff;border-bottom:0.5px solid rgba(0,0,0,.1);display:flex;align-items:center;justify-content:space-between}
@@ -28,6 +29,13 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#f5
 .btn:hover{background:#f0efea}
 .btn.primary{background:#185FA5;color:#fff;border-color:#185FA5}
 .btn.primary:hover{background:#0C447C}
+.btn.danger{background:#A32D2D;color:#fff;border-color:#A32D2D}
+.btn.danger:hover{background:#7c1c1c}
+.btn.warning{background:#854F0B;color:#fff;border-color:#854F0B}
+.btn.warning:hover{background:#623a08}
+.btn.success{background:#0F6E56;color:#fff;border-color:#0F6E56}
+.btn.success:hover{background:#0a4f3d}
+.btn.sm{padding:4px 10px;font-size:11px}
 .content{flex:1;overflow-y:auto;padding:20px}
 .view{display:none}
 .view.active{display:block}
@@ -81,6 +89,28 @@ textarea.form-input{resize:vertical;min-height:80px;font-family:inherit}
 .tabs{display:flex;gap:0;margin-bottom:16px;border-bottom:0.5px solid rgba(0,0,0,.1)}
 .tab{padding:8px 16px;cursor:pointer;font-size:13px;color:#666;border-bottom:2px solid transparent;margin-bottom:-1px}
 .tab.active{color:#185FA5;border-bottom-color:#185FA5;font-weight:500}
+/* 관리 섹션 */
+.admin-header{background:linear-gradient(135deg,#FEF3E2,#FAEEDA);border:0.5px solid rgba(133,79,11,.15);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.admin-header i{font-size:20px;color:#854F0B}
+.admin-header-text h3{font-size:13px;font-weight:500;color:#854F0B}
+.admin-header-text p{font-size:11px;color:#a8682a;margin-top:2px}
+.action-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.search-box{display:flex;align-items:center;gap:8px}
+.search-input{padding:6px 12px;border:0.5px solid rgba(0,0,0,.2);border-radius:6px;font-size:12px;width:200px}
+.color-preview{width:20px;height:20px;border-radius:50%;border:1px solid rgba(0,0,0,.15);display:inline-block;vertical-align:middle;margin-right:4px}
+.action-btns{display:flex;gap:4px}
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:200}
+.confirm-box{background:#fff;border-radius:10px;padding:20px;width:320px;text-align:center}
+.confirm-box h4{font-size:14px;font-weight:500;margin-bottom:8px}
+.confirm-box p{font-size:12px;color:#666;margin-bottom:16px;line-height:1.5}
+.confirm-actions{display:flex;gap:8px;justify-content:center}
+/* 월별 매출 입력 */
+.sales-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:16px}
+.sales-card{background:#f9f9f7;border:0.5px solid rgba(0,0,0,.1);border-radius:8px;padding:12px}
+.sales-card-name{font-size:12px;font-weight:500;margin-bottom:8px}
+.sales-card-input{width:100%;padding:5px 8px;border:0.5px solid rgba(0,0,0,.2);border-radius:5px;font-size:12px;text-align:right}
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1a1a;color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
 </style>
 </head>
 <body>
@@ -96,17 +126,17 @@ textarea.form-input{resize:vertical;min-height:80px;font-family:inherit}
     <div class="nav-sec">영업 활동</div>
     <div class="nav-item" onclick="nav('logs',this)"><i class="ti ti-notebook"></i>활동 로그</div>
     <div class="nav-item" onclick="nav('compare',this)"><i class="ti ti-arrows-exchange"></i>기간 비교</div>
+    <div class="nav-sec">관리</div>
+    <div class="nav-item admin-item" onclick="nav('admin-managers',this)"><i class="ti ti-users"></i>팀장 관리</div>
+    <div class="nav-item admin-item" onclick="nav('admin-products',this)"><i class="ti ti-package-export"></i>상품 관리</div>
+    <div class="nav-item admin-item" onclick="nav('admin-sales',this)"><i class="ti ti-coin"></i>매출 입력/수정</div>
+    <div class="nav-item admin-item" onclick="nav('admin-history',this)"><i class="ti ti-history"></i>과거 매출 관리</div>
   </div>
   <div class="main">
     <div class="topbar">
       <span class="topbar-title" id="topbar-title">📊 대시보드</span>
       <div class="topbar-right">
-        <select class="sel" id="periodSel" onchange="onPeriodChange(this.value)">
-          <option value="2025-06">2025년 6월</option>
-          <option value="2025-05" selected>2025년 5월</option>
-          <option value="2025-04">2025년 4월</option>
-          <option value="2025-03">2025년 3월</option>
-        </select>
+        <select class="sel" id="periodSel" onchange="onPeriodChange(this.value)"></select>
         <button class="btn primary" onclick="openLogModal()"><i class="ti ti-plus"></i>활동 로그 입력</button>
       </div>
     </div>
@@ -171,6 +201,96 @@ textarea.form-input{resize:vertical;min-height:80px;font-family:inherit}
         <div class="card"><div class="card-title"><span>📋 팀장별 기간 비교</span></div><table><thead><tr><th>팀장</th><th>전월</th><th>당월</th><th>MoM</th><th>전년동월</th><th>YoY</th><th>달성률</th></tr></thead><tbody id="compare-table"></tbody></table></div>
       </div>
 
+      <!-- ============ 관리: 팀장 ============ -->
+      <div id="view-admin-managers" class="view">
+        <div class="admin-header">
+          <i class="ti ti-users"></i>
+          <div class="admin-header-text"><h3>팀장 관리</h3><p>팀장 추가·수정·삭제를 여기서 직접 처리합니다</p></div>
+        </div>
+        <div class="action-bar">
+          <div class="search-box">
+            <input class="search-input" type="text" id="mgr-search" placeholder="이름 또는 팀 검색..." oninput="renderMgrTable()">
+          </div>
+          <button class="btn primary" onclick="openMgrModal()"><i class="ti ti-plus"></i> 팀장 추가</button>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>이름</th><th>팀</th><th>월 목표(만원)</th><th>색상</th><th>상태</th><th style="width:120px">작업</th></tr></thead>
+            <tbody id="mgr-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ============ 관리: 상품 ============ -->
+      <div id="view-admin-products" class="view">
+        <div class="admin-header">
+          <i class="ti ti-package-export"></i>
+          <div class="admin-header-text"><h3>상품 관리</h3><p>상품 추가·수정·종료 처리를 여기서 합니다</p></div>
+        </div>
+        <div class="action-bar">
+          <div class="search-box">
+            <input class="search-input" type="text" id="prod-admin-search" placeholder="상품명 검색..." oninput="renderAdminProdTable()">
+            <select class="sel" id="prod-admin-filter" onchange="renderAdminProdTable()">
+              <option value="">전체</option>
+              <option value="active">유지 중</option>
+              <option value="ended">종료</option>
+            </select>
+          </div>
+          <button class="btn primary" onclick="openAdminProdModal()"><i class="ti ti-plus"></i> 상품 추가</button>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>상품명</th><th>구분</th><th>담당팀장</th><th>계약기간</th><th>상태</th><th style="width:140px">작업</th></tr></thead>
+            <tbody id="admin-prod-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ============ 관리: 매출 입력/수정 ============ -->
+      <div id="view-admin-sales" class="view">
+        <div class="admin-header">
+          <i class="ti ti-coin"></i>
+          <div class="admin-header-text"><h3>매출 입력 / 수정</h3><p>팀장별·상품별 월 매출을 직접 입력하거나 수정합니다</p></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+          <label style="font-size:12px;color:#666;font-weight:500">대상 월</label>
+          <select class="sel" id="sales-admin-period" onchange="loadAdminSales()"></select>
+          <label style="font-size:12px;color:#666;font-weight:500;margin-left:8px">팀장</label>
+          <select class="sel" id="sales-admin-mgr" onchange="loadAdminSales()" style="width:160px"></select>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <span id="sales-admin-title">매출 입력</span>
+            <button class="btn success" onclick="saveAllSales()"><i class="ti ti-device-floppy"></i> 전체 저장</button>
+          </div>
+          <div id="sales-admin-body"><div class="empty">팀장을 선택하면 담당 상품 목록이 표시됩니다</div></div>
+        </div>
+      </div>
+
+      <!-- ============ 관리: 과거 매출 ============ -->
+      <div id="view-admin-history" class="view">
+        <div class="admin-header">
+          <i class="ti ti-history"></i>
+          <div class="admin-header-text"><h3>과거 매출 관리</h3><p>월별 매출 데이터를 조회·수정·삭제합니다</p></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+          <label style="font-size:12px;color:#666;font-weight:500">기간</label>
+          <select class="sel" id="hist-period" onchange="loadHistory()"></select>
+          <label style="font-size:12px;color:#666;font-weight:500;margin-left:8px">팀장</label>
+          <select class="sel" id="hist-mgr" onchange="loadHistory()" style="width:160px"></select>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <span id="hist-title">매출 이력</span>
+            <span id="hist-total" style="font-size:12px;color:#0F6E56;font-weight:500"></span>
+          </div>
+          <table>
+            <thead><tr><th>월</th><th>팀장</th><th>상품</th><th>매출(만원)</th><th>메모</th><th style="width:80px">작업</th></tr></thead>
+            <tbody id="hist-table"></tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -196,44 +316,191 @@ textarea.form-input{resize:vertical;min-height:80px;font-family:inherit}
   </div>
 </div>
 
+<!-- 팀장 추가/수정 모달 -->
+<div class="modal-overlay" id="mgrModal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal">
+    <div class="modal-title"><span id="mgr-modal-title">팀장 추가</span><span style="cursor:pointer;font-size:18px;color:#888" onclick="document.getElementById('mgrModal').style.display='none'">✕</span></div>
+    <input type="hidden" id="mgr_id">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div><label class="form-label">이름 *</label><input type="text" class="form-input" id="mgr_name" placeholder="홍길동"></div>
+      <div><label class="form-label">팀 *</label><input type="text" class="form-input" id="mgr_team" placeholder="영업1팀"></div>
+    </div>
+    <div class="form-group"><label class="form-label">월 목표 매출 (만원)</label><input type="number" class="form-input" id="mgr_target" placeholder="0"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div><label class="form-label">아바타 텍스트 색상</label><input type="color" class="form-input" id="mgr_color" value="#378ADD" style="height:38px;padding:2px"></div>
+      <div><label class="form-label">아바타 배경 색상</label><input type="color" class="form-input" id="mgr_bg_color" value="#E6F1FB" style="height:38px;padding:2px"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn" onclick="document.getElementById('mgrModal').style.display='none'">취소</button>
+      <button class="btn primary" onclick="saveMgr()"><i class="ti ti-check"></i> 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 상품 추가/수정 모달 -->
+<div class="modal-overlay" id="adminProdModal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal">
+    <div class="modal-title"><span id="admin-prod-modal-title">상품 추가</span><span style="cursor:pointer;font-size:18px;color:#888" onclick="document.getElementById('adminProdModal').style.display='none'">✕</span></div>
+    <input type="hidden" id="admin_prod_id">
+    <div class="form-group"><label class="form-label">상품명 *</label><input type="text" class="form-input" id="admin_prod_name" placeholder="상품명을 입력하세요"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div><label class="form-label">구분 *</label>
+        <select class="form-input" id="admin_prod_type">
+          <option value="regular">상시</option>
+          <option value="season">시즌</option>
+        </select>
+      </div>
+      <div><label class="form-label">상태</label>
+        <select class="form-input" id="admin_prod_status">
+          <option value="active">유지</option>
+          <option value="ended">종료</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">담당 팀장</label><select class="form-input" id="admin_prod_manager"></select></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div><label class="form-label">계약 시작일</label><input type="date" class="form-input" id="admin_prod_start"></div>
+      <div><label class="form-label">계약 종료일</label><input type="date" class="form-input" id="admin_prod_end"></div>
+    </div>
+    <div class="form-group"><label class="form-label">메모</label><textarea class="form-input" id="admin_prod_desc" placeholder="상품 설명 또는 메모"></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn" onclick="document.getElementById('adminProdModal').style.display='none'">취소</button>
+      <button class="btn primary" onclick="saveAdminProd()"><i class="ti ti-check"></i> 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 매출 이력 수정 모달 -->
+<div class="modal-overlay" id="histEditModal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal" style="width:360px">
+    <div class="modal-title"><span>매출 수정</span><span style="cursor:pointer;font-size:18px;color:#888" onclick="document.getElementById('histEditModal').style.display='none'">✕</span></div>
+    <input type="hidden" id="hist_edit_id">
+    <input type="hidden" id="hist_edit_manager_id">
+    <input type="hidden" id="hist_edit_product_id">
+    <input type="hidden" id="hist_edit_period">
+    <div class="form-group"><label class="form-label">매출 금액 (만원) *</label><input type="number" class="form-input" id="hist_edit_amount" placeholder="0"></div>
+    <div class="form-group"><label class="form-label">메모</label><input type="text" class="form-input" id="hist_edit_note" placeholder="메모"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn" onclick="document.getElementById('histEditModal').style.display='none'">취소</button>
+      <button class="btn primary" onclick="saveHistEdit()"><i class="ti ti-check"></i> 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 확인 대화상자 -->
+<div class="confirm-overlay" id="confirmOverlay" style="display:none">
+  <div class="confirm-box">
+    <h4 id="confirm-title">확인</h4>
+    <p id="confirm-msg"></p>
+    <div class="confirm-actions">
+      <button class="btn" onclick="document.getElementById('confirmOverlay').style.display='none'">취소</button>
+      <button class="btn danger" id="confirm-ok">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 토스트 -->
+<div class="toast" id="toast"></div>
+
 <script>
-const API = 'http://localhost:3000/api';
-let currentPeriod = '2025-05';
+const API = '';  // 상대 경로 (서버와 같은 origin)
+let currentPeriod = '';
 let prodFilter = 'all';
 let logTypeFilter = 'all';
 let charts = {};
 let managers = [];
 let products = [];
+let adminManagers = [];
+let adminProducts = [];
+let historyData = [];
 
+// ── 기간 목록 생성 ──────────────────────────────────────────
+function buildPeriods() {
+  const now = new Date();
+  const sel1 = document.getElementById('periodSel');
+  const sel2 = document.getElementById('sales-admin-period');
+  const sel3 = document.getElementById('hist-period');
+  [sel1, sel2, sel3].forEach(sel => sel.innerHTML = '');
+  for (let i = 0; i < 24; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const v = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const label = `${d.getFullYear()}년 ${d.getMonth()+1}월`;
+    [sel1, sel2, sel3].forEach(sel => {
+      const o = document.createElement('option');
+      o.value = v; o.textContent = label;
+      if (i === 0) o.selected = true;
+      sel.appendChild(o);
+    });
+  }
+  currentPeriod = sel1.value;
+}
+
+// ── 유틸 ────────────────────────────────────────────────────
 async function apiFetch(path) {
   try {
-    const r = await fetch(API + path);
+    const r = await fetch(API + '/api' + path);
     const d = await r.json();
     return d.success ? d : null;
   } catch(e) { console.error(e); return null; }
 }
-
 async function apiPost(path, body) {
   try {
-    const r = await fetch(API + path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const r = await fetch(API + '/api' + path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    return await r.json();
+  } catch(e) { console.error(e); return null; }
+}
+async function apiPut(path, body) {
+  try {
+    const r = await fetch(API + '/api' + path, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    return await r.json();
+  } catch(e) { console.error(e); return null; }
+}
+async function apiDelete(path) {
+  try {
+    const r = await fetch(API + '/api' + path, { method:'DELETE' });
     return await r.json();
   } catch(e) { console.error(e); return null; }
 }
 
-// 네비게이션
-const titles = { dashboard:'📊 대시보드', performance:'📈 팀장별 실적', products:'📦 상품별 매출', status:'📋 관리상품 현황', logs:'📝 영업 활동 로그', compare:'🔄 기간 비교' };
+function toast(msg, type='ok') {
+  const el = document.getElementById('toast');
+  el.textContent = (type==='ok'?'✅ ':'❌ ') + msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2500);
+}
+
+function confirm2(title, msg, onOk) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent = msg;
+  const btn = document.getElementById('confirm-ok');
+  btn.onclick = () => { document.getElementById('confirmOverlay').style.display='none'; onOk(); };
+  document.getElementById('confirmOverlay').style.display='flex';
+}
+
+// ── 네비게이션 ──────────────────────────────────────────────
+const titles = {
+  dashboard:'📊 대시보드', performance:'📈 팀장별 실적',
+  products:'📦 상품별 매출', status:'📋 관리상품 현황',
+  logs:'📝 영업 활동 로그', compare:'🔄 기간 비교',
+  'admin-managers':'⚙️ 팀장 관리', 'admin-products':'⚙️ 상품 관리',
+  'admin-sales':'⚙️ 매출 입력/수정', 'admin-history':'⚙️ 과거 매출 관리'
+};
 function nav(view, el) {
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('view-'+view).classList.add('active');
   document.getElementById('topbar-title').textContent = titles[view];
-  if(view==='dashboard')   loadDashboard();
-  if(view==='performance') loadPerformance();
-  if(view==='products')    loadProducts();
-  if(view==='status')      loadStatus();
-  if(view==='logs')        loadLogs();
-  if(view==='compare')     loadCompare();
+  if(view==='dashboard')       loadDashboard();
+  if(view==='performance')     loadPerformance();
+  if(view==='products')        loadProducts();
+  if(view==='status')          loadStatus();
+  if(view==='logs')            loadLogs();
+  if(view==='compare')         loadCompare();
+  if(view==='admin-managers')  loadAdminManagers();
+  if(view==='admin-products')  loadAdminProducts();
+  if(view==='admin-sales')     initAdminSales();
+  if(view==='admin-history')   initAdminHistory();
 }
 
 function onPeriodChange(v) { currentPeriod = v; loadDashboard(); }
@@ -245,7 +512,7 @@ function rateBadge(cur, prev) {
   return d >= 0 ? `<span class="badge up">▲${d}%</span>` : `<span class="badge down">▼${Math.abs(d)}%</span>`;
 }
 
-// ── 대시보드 ──────────────────────────────────────────────────
+// ── 대시보드 ────────────────────────────────────────────────
 async function loadDashboard() {
   const res = await apiFetch(`/sales/dashboard?period=${currentPeriod}`);
   if (!res) return;
@@ -258,7 +525,6 @@ async function loadDashboard() {
     <div class="mc"><div class="mc-label">종료상품 미발생분</div><div class="mc-value">₩${fmt(summary.total_missed)}</div><div class="mc-sub down">${summary.missed_count}건 종료</div></div>
   `;
 
-  // 순위 테이블
   document.getElementById('rank-table').innerHTML = mgrs.map((m,i) => `
     <tr>
       <td><span class="rank-num">${i+1}</span></td>
@@ -270,7 +536,6 @@ async function loadDashboard() {
       <td><div style="min-width:100px"><div style="font-size:11px;margin-bottom:2px">${m.target?(m.current_sales/m.target*100).toFixed(0):0}%</div><div class="progress-bar"><div class="progress-fill" style="width:${m.target?Math.min(m.current_sales/m.target*100,100):0}%;background:${m.color}"></div></div></div></td>
     </tr>`).join('');
 
-  // 추이 차트
   if (charts.trend) charts.trend.destroy();
   charts.trend = new Chart(document.getElementById('trendChart'), {
     type:'line',
@@ -278,7 +543,6 @@ async function loadDashboard() {
     options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{callback:v=>v+'억'}, grid:{color:'rgba(0,0,0,.05)'}}}}
   });
 
-  // 유형별 차트
   if (charts.type) charts.type.destroy();
   const regularTotal = byType.find(b=>b.type==='regular')?.total || 0;
   const seasonTotal  = byType.find(b=>b.type==='season')?.total  || 0;
@@ -289,7 +553,7 @@ async function loadDashboard() {
   });
 }
 
-// ── 팀장별 실적 ──────────────────────────────────────────────
+// ── 팀장별 실적 ─────────────────────────────────────────────
 async function loadPerformance() {
   if (!managers.length) {
     const res = await apiFetch(`/managers?period=${currentPeriod}`);
@@ -323,7 +587,7 @@ async function showMgrDetail(id, el) {
     </div>`;
 }
 
-// ── 상품별 매출 ──────────────────────────────────────────────
+// ── 상품별 매출 ─────────────────────────────────────────────
 async function loadProducts() {
   const params = prodFilter==='all' ? '' : prodFilter==='ended' ? '?status=ended' : `?type=${prodFilter}`;
   const res = await apiFetch(`/products${params}&period=${currentPeriod}`);
@@ -378,7 +642,6 @@ async function loadStatus() {
 
 // ── 활동 로그 ────────────────────────────────────────────────
 async function loadLogs() {
-  // 팀장 필터 옵션 초기화
   const mgrSel = document.getElementById('log-mgr-filter');
   if (mgrSel.options.length <= 1) {
     const res = await apiFetch('/managers');
@@ -392,7 +655,6 @@ async function loadLogs() {
       mgrSel.insertBefore(o, mgrSel.options[0]);
     }
   }
-
   const mgr   = document.getElementById('log-mgr-filter').value;
   const month = document.getElementById('log-month-filter').value;
   let url = '/logs?limit=50';
@@ -460,14 +722,9 @@ async function loadCompare() {
 
 // ── 로그 저장 ────────────────────────────────────────────────
 async function openLogModal() {
-  // 팀장/상품 목록 로드
   const [mRes, pRes] = await Promise.all([apiFetch('/managers'), apiFetch('/products')]);
-  if (mRes) {
-    document.getElementById('log_manager_id').innerHTML = mRes.data.map(m=>`<option value="${m.id}">${m.name} (${m.team})</option>`).join('');
-  }
-  if (pRes) {
-    document.getElementById('log_product_id').innerHTML = '<option value="">상품 선택</option>' + pRes.data.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
-  }
+  if (mRes) document.getElementById('log_manager_id').innerHTML = mRes.data.map(m=>`<option value="${m.id}">${m.name} (${m.team})</option>`).join('');
+  if (pRes) document.getElementById('log_product_id').innerHTML = '<option value="">상품 선택</option>' + pRes.data.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
   document.getElementById('log_date').value = new Date().toISOString().slice(0,10);
   document.getElementById('logModal').style.display = 'flex';
 }
@@ -483,20 +740,380 @@ async function saveLog() {
     next_action:     document.getElementById('log_next').value,
     expected_amount: Number(document.getElementById('log_amount').value) || 0,
   };
-  if (!body.client || !body.content) { alert('고객사와 활동 내용은 필수입니다.'); return; }
+  if (!body.client || !body.content) { toast('고객사와 활동 내용은 필수입니다', 'err'); return; }
   const res = await apiPost('/logs', body);
   if (res && res.success) {
     document.getElementById('logModal').style.display = 'none';
-    document.getElementById('log_client').value = '';
-    document.getElementById('log_content').value = '';
-    document.getElementById('log_next').value = '';
-    document.getElementById('log_amount').value = '';
-    alert('✅ 활동 로그가 저장됐습니다!');
+    ['log_client','log_content','log_next','log_amount'].forEach(id => document.getElementById(id).value = '');
+    toast('활동 로그가 저장됐습니다');
     if (document.getElementById('view-logs').classList.contains('active')) loadLogs();
-  } else { alert('저장 실패. 다시 시도해주세요.'); }
+  } else { toast('저장 실패. 다시 시도해주세요.', 'err'); }
 }
 
-// 초기 로드
+
+// ════════════════════════════════════════════════════════════
+// ██ 관리 - 팀장
+// ════════════════════════════════════════════════════════════
+async function loadAdminManagers() {
+  const res = await apiFetch('/managers?period=' + currentPeriod);
+  if (res) {
+    // is_active 포함된 전체 가져오기 (비활성 포함 별도 처리 필요시 서버 수정 필요)
+    adminManagers = res.data;
+    renderMgrTable();
+  }
+}
+
+function renderMgrTable() {
+  const kw = document.getElementById('mgr-search').value.toLowerCase();
+  const filtered = adminManagers.filter(m =>
+    m.name.toLowerCase().includes(kw) || m.team.toLowerCase().includes(kw)
+  );
+  const tbody = document.getElementById('mgr-table');
+  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty" style="padding:24px">검색 결과가 없습니다</td></tr>'; return; }
+  tbody.innerHTML = filtered.map(m => `
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <div class="avatar" style="background:${m.bg_color};color:${m.color};width:28px;height:28px;font-size:10px">${m.name.slice(0,2)}</div>
+        <span style="font-weight:500">${m.name}</span>
+      </div></td>
+      <td>${m.team}</td>
+      <td>${m.target ? m.target.toLocaleString() : '–'}</td>
+      <td>
+        <span class="color-preview" style="background:${m.color}"></span>${m.color}
+        &nbsp;/&nbsp;<span class="color-preview" style="background:${m.bg_color}"></span>${m.bg_color}
+      </td>
+      <td><span class="badge active">활성</span></td>
+      <td>
+        <div class="action-btns">
+          <button class="btn sm" onclick="editMgr(${m.id})"><i class="ti ti-edit"></i></button>
+          <button class="btn sm danger" onclick="deleteMgr(${m.id},'${m.name}')"><i class="ti ti-trash"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function openMgrModal(id) {
+  document.getElementById('mgr_id').value = '';
+  document.getElementById('mgr_name').value = '';
+  document.getElementById('mgr_team').value = '';
+  document.getElementById('mgr_target').value = '';
+  document.getElementById('mgr_color').value = '#378ADD';
+  document.getElementById('mgr_bg_color').value = '#E6F1FB';
+  document.getElementById('mgr-modal-title').textContent = '팀장 추가';
+  document.getElementById('mgrModal').style.display = 'flex';
+}
+
+function editMgr(id) {
+  const m = adminManagers.find(x=>x.id===id);
+  if (!m) return;
+  document.getElementById('mgr_id').value = id;
+  document.getElementById('mgr_name').value = m.name;
+  document.getElementById('mgr_team').value = m.team;
+  document.getElementById('mgr_target').value = m.target || '';
+  document.getElementById('mgr_color').value = m.color || '#378ADD';
+  document.getElementById('mgr_bg_color').value = m.bg_color || '#E6F1FB';
+  document.getElementById('mgr-modal-title').textContent = '팀장 수정';
+  document.getElementById('mgrModal').style.display = 'flex';
+}
+
+async function saveMgr() {
+  const id   = document.getElementById('mgr_id').value;
+  const body = {
+    name:     document.getElementById('mgr_name').value.trim(),
+    team:     document.getElementById('mgr_team').value.trim(),
+    target:   Number(document.getElementById('mgr_target').value) || 0,
+    color:    document.getElementById('mgr_color').value,
+    bg_color: document.getElementById('mgr_bg_color').value,
+  };
+  if (!body.name || !body.team) { toast('이름과 팀은 필수입니다', 'err'); return; }
+  const res = id ? await apiPut(`/managers/${id}`, body) : await apiPost('/managers', body);
+  if (res && res.success) {
+    document.getElementById('mgrModal').style.display = 'none';
+    toast(id ? '팀장 정보가 수정됐습니다' : '팀장이 추가됐습니다');
+    managers = []; // 캐시 초기화
+    loadAdminManagers();
+  } else { toast('저장 실패', 'err'); }
+}
+
+function deleteMgr(id, name) {
+  confirm2('팀장 삭제', `"${name}" 팀장을 비활성화합니다. 기존 매출·로그 데이터는 유지됩니다.`, async () => {
+    const res = await apiDelete(`/managers/${id}`);
+    if (res && res.success) { toast('팀장이 비활성화됐습니다'); managers=[]; loadAdminManagers(); }
+    else toast('삭제 실패', 'err');
+  });
+}
+
+
+// ════════════════════════════════════════════════════════════
+// ██ 관리 - 상품
+// ════════════════════════════════════════════════════════════
+async function loadAdminProducts() {
+  const [pRes, mRes] = await Promise.all([apiFetch('/products'), apiFetch('/managers')]);
+  if (pRes) adminProducts = pRes.data;
+  if (mRes) adminManagers = mRes.data;
+  renderAdminProdTable();
+}
+
+function renderAdminProdTable() {
+  const kw  = document.getElementById('prod-admin-search').value.toLowerCase();
+  const st  = document.getElementById('prod-admin-filter').value;
+  let list  = adminProducts;
+  if (kw) list = list.filter(p => p.name.toLowerCase().includes(kw));
+  if (st) list = list.filter(p => p.status === st);
+
+  const tbody = document.getElementById('admin-prod-table');
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty" style="padding:24px">결과 없음</td></tr>'; return; }
+  tbody.innerHTML = list.map(p => `
+    <tr>
+      <td style="font-weight:500">${p.name}</td>
+      <td><span class="badge ${p.type}">${p.type==='regular'?'상시':'시즌'}</span></td>
+      <td>${p.manager_name||'–'}</td>
+      <td style="font-size:11px;color:#666">${p.start_date||'–'} ~ ${p.end_date||'–'}</td>
+      <td><span class="badge ${p.status}">${p.status==='active'?'유지':'종료'}</span></td>
+      <td>
+        <div class="action-btns">
+          <button class="btn sm" onclick="editAdminProd(${p.id})"><i class="ti ti-edit"></i></button>
+          <button class="btn sm danger" onclick="deleteAdminProd(${p.id},'${p.name.replace(/'/g,"\\'")}')"><i class="ti ti-trash"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function openAdminProdModal() {
+  document.getElementById('admin_prod_id').value = '';
+  document.getElementById('admin_prod_name').value = '';
+  document.getElementById('admin_prod_type').value = 'regular';
+  document.getElementById('admin_prod_status').value = 'active';
+  document.getElementById('admin_prod_start').value = '';
+  document.getElementById('admin_prod_end').value = '';
+  document.getElementById('admin_prod_desc').value = '';
+  const mgrSel = document.getElementById('admin_prod_manager');
+  mgrSel.innerHTML = '<option value="">담당 없음</option>' + adminManagers.map(m=>`<option value="${m.id}">${m.name} (${m.team})</option>`).join('');
+  document.getElementById('admin-prod-modal-title').textContent = '상품 추가';
+  document.getElementById('adminProdModal').style.display = 'flex';
+}
+
+function editAdminProd(id) {
+  const p = adminProducts.find(x=>x.id===id);
+  if (!p) return;
+  document.getElementById('admin_prod_id').value = id;
+  document.getElementById('admin_prod_name').value = p.name;
+  document.getElementById('admin_prod_type').value = p.type;
+  document.getElementById('admin_prod_status').value = p.status;
+  document.getElementById('admin_prod_start').value = p.start_date||'';
+  document.getElementById('admin_prod_end').value = p.end_date||'';
+  document.getElementById('admin_prod_desc').value = p.description||'';
+  const mgrSel = document.getElementById('admin_prod_manager');
+  mgrSel.innerHTML = '<option value="">담당 없음</option>' + adminManagers.map(m=>`<option value="${m.id}"${m.id===p.manager_id?' selected':''}>${m.name} (${m.team})</option>`).join('');
+  document.getElementById('admin-prod-modal-title').textContent = '상품 수정';
+  document.getElementById('adminProdModal').style.display = 'flex';
+}
+
+async function saveAdminProd() {
+  const id   = document.getElementById('admin_prod_id').value;
+  const body = {
+    name:        document.getElementById('admin_prod_name').value.trim(),
+    type:        document.getElementById('admin_prod_type').value,
+    status:      document.getElementById('admin_prod_status').value,
+    manager_id:  Number(document.getElementById('admin_prod_manager').value) || null,
+    start_date:  document.getElementById('admin_prod_start').value || null,
+    end_date:    document.getElementById('admin_prod_end').value || null,
+    description: document.getElementById('admin_prod_desc').value || null,
+  };
+  if (!body.name) { toast('상품명은 필수입니다', 'err'); return; }
+  const res = id ? await apiPut(`/products/${id}`, body) : await apiPost('/products', body);
+  if (res && res.success) {
+    document.getElementById('adminProdModal').style.display = 'none';
+    toast(id ? '상품 정보가 수정됐습니다' : '상품이 추가됐습니다');
+    products = []; // 캐시 초기화
+    loadAdminProducts();
+  } else { toast('저장 실패', 'err'); }
+}
+
+function deleteAdminProd(id, name) {
+  confirm2('상품 삭제', `"${name}" 상품을 삭제합니다. 연관된 매출 데이터는 유지됩니다.`, async () => {
+    // products에 DELETE endpoint가 없으므로 status를 ended로 변경
+    const res = await apiPut(`/products/${id}`, { status: 'ended' });
+    if (res && res.success) { toast('상품이 종료 처리됐습니다'); products=[]; loadAdminProducts(); }
+    else toast('처리 실패', 'err');
+  });
+}
+
+
+// ════════════════════════════════════════════════════════════
+// ██ 관리 - 매출 입력/수정
+// ════════════════════════════════════════════════════════════
+async function initAdminSales() {
+  const mRes = await apiFetch('/managers');
+  if (mRes) {
+    const sel = document.getElementById('sales-admin-mgr');
+    sel.innerHTML = '<option value="">팀장 선택</option>' + mRes.data.map(m=>`<option value="${m.id}">${m.name} (${m.team})</option>`).join('');
+  }
+}
+
+async function loadAdminSales() {
+  const mgrId  = document.getElementById('sales-admin-mgr').value;
+  const period = document.getElementById('sales-admin-period').value;
+  if (!mgrId) { document.getElementById('sales-admin-body').innerHTML = '<div class="empty">팀장을 선택하면 담당 상품 목록이 표시됩니다</div>'; return; }
+
+  // 해당 팀장의 상품 목록 + 현재 월 매출
+  const [pRes, sRes] = await Promise.all([
+    apiFetch(`/products?period=${period}`),
+    apiFetch(`/sales/dashboard?period=${period}`)
+  ]);
+  if (!pRes) return;
+
+  const mgr = (sRes?.data?.managers || []).find(m => m.id === Number(mgrId));
+  document.getElementById('sales-admin-title').textContent = `${mgr?.name||'팀장'} — ${period} 매출 입력`;
+
+  // 해당 팀장 담당 상품
+  const myProds = pRes.data.filter(p => p.manager_id === Number(mgrId));
+
+  if (!myProds.length) {
+    document.getElementById('sales-admin-body').innerHTML = '<div class="empty">담당 상품이 없습니다. 먼저 상품에 담당 팀장을 지정하세요.</div>';
+    return;
+  }
+
+  // 현재 매출 데이터를 별도 API로 가져오기 (product별 current_sales 활용)
+  const rows = myProds.map(p => `
+    <tr>
+      <td style="font-weight:500">${p.name}</td>
+      <td><span class="badge ${p.type}">${p.type==='regular'?'상시':'시즌'}</span></td>
+      <td><span class="badge ${p.status}">${p.status==='active'?'유지':'종료'}</span></td>
+      <td style="width:160px">
+        <input type="number" class="sales-card-input" 
+          id="sales_input_${p.id}" 
+          value="${p.current_sales || 0}"
+          placeholder="0" style="width:120px">
+        <span style="font-size:11px;color:#888;margin-left:4px">만원</span>
+      </td>
+      <td style="font-size:11px;color:#888">
+        전월: ${p.prev_sales ? p.prev_sales.toLocaleString()+'만' : '–'}
+      </td>
+    </tr>`).join('');
+
+  document.getElementById('sales-admin-body').innerHTML = `
+    <table>
+      <thead><tr><th>상품명</th><th>구분</th><th>상태</th><th>매출 (만원)</th><th>참고</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+
+  // 저장 버튼에 필요한 데이터 저장
+  document.getElementById('sales-admin-body').dataset.mgrId = mgrId;
+  document.getElementById('sales-admin-body').dataset.period = period;
+  document.getElementById('sales-admin-body').dataset.prodIds = myProds.map(p=>p.id).join(',');
+}
+
+async function saveAllSales() {
+  const body_el = document.getElementById('sales-admin-body');
+  const mgrId   = Number(body_el.dataset.mgrId);
+  const period  = body_el.dataset.period;
+  const prodIds = (body_el.dataset.prodIds||'').split(',').filter(Boolean).map(Number);
+  if (!mgrId || !period || !prodIds.length) { toast('먼저 팀장을 선택하세요', 'err'); return; }
+
+  let saved = 0;
+  for (const pid of prodIds) {
+    const el = document.getElementById(`sales_input_${pid}`);
+    if (!el) continue;
+    const amount = Number(el.value) || 0;
+    const res = await apiPost('/sales', { manager_id: mgrId, product_id: pid, period, amount });
+    if (res && res.success) saved++;
+  }
+  toast(`${saved}건 매출이 저장됐습니다`);
+}
+
+
+// ════════════════════════════════════════════════════════════
+// ██ 관리 - 과거 매출
+// ════════════════════════════════════════════════════════════
+async function initAdminHistory() {
+  const mRes = await apiFetch('/managers');
+  if (mRes) {
+    const sel = document.getElementById('hist-mgr');
+    sel.innerHTML = '<option value="">전체 팀장</option>' + mRes.data.map(m=>`<option value="${m.id}">${m.name} (${m.team})</option>`).join('');
+  }
+  loadHistory();
+}
+
+async function loadHistory() {
+  const period = document.getElementById('hist-period').value;
+  const mgrId  = document.getElementById('hist-mgr').value;
+
+  // monthly_sales를 dashboard API로 간접 조회 → 더 직접적인 방법 없으므로
+  // products + dashboard 조합으로 재현
+  const [pRes, dRes] = await Promise.all([
+    apiFetch('/products?period=' + period),
+    apiFetch('/sales/dashboard?period=' + period)
+  ]);
+  if (!pRes || !dRes) return;
+
+  const allProds = pRes.data;
+  const mgrs = dRes.data.managers;
+
+  // 각 팀장·상품 조합으로 매출 재구성
+  let rows = [];
+  for (const m of mgrs) {
+    if (mgrId && m.id !== Number(mgrId)) continue;
+    const myProds = allProds.filter(p => p.manager_id === m.id);
+    for (const p of myProds) {
+      if (p.current_sales > 0 || !mgrId) {
+        rows.push({ manager_id: m.id, manager_name: m.name, manager_team: m.team, manager_color: m.color, manager_bg: m.bg_color, product_id: p.id, product_name: p.name, product_type: p.type, period, amount: p.current_sales || 0, note: '' });
+      }
+    }
+  }
+
+  historyData = rows;
+  document.getElementById('hist-title').textContent = `${period} 매출 이력`;
+  const total = rows.reduce((s,r)=>s+r.amount,0);
+  document.getElementById('hist-total').textContent = total ? `합계: ${total.toLocaleString()}만원` : '';
+
+  const tbody = document.getElementById('hist-table');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty" style="padding:24px">데이터가 없습니다</td></tr>'; return; }
+  tbody.innerHTML = rows.map((r,i) => `
+    <tr>
+      <td><span class="badge nm">${r.period}</span></td>
+      <td><div style="display:flex;align-items:center;gap:6px">
+        <div class="avatar" style="background:${r.manager_bg||'#E6F1FB'};color:${r.manager_color||'#185FA5'};width:24px;height:24px;font-size:9px">${r.manager_name.slice(0,2)}</div>
+        ${r.manager_name} (${r.manager_team})
+      </div></td>
+      <td><span class="badge ${r.product_type}">${r.product_type==='regular'?'상시':'시즌'}</span> ${r.product_name}</td>
+      <td style="font-weight:500;color:${r.amount>0?'#0F6E56':'#999'}">${r.amount.toLocaleString()}</td>
+      <td style="color:#888;font-size:11px">${r.note||'–'}</td>
+      <td>
+        <button class="btn sm" onclick="openHistEdit(${i})"><i class="ti ti-edit"></i></button>
+      </td>
+    </tr>`).join('');
+}
+
+function openHistEdit(idx) {
+  const r = historyData[idx];
+  if (!r) return;
+  document.getElementById('hist_edit_id').value = idx;
+  document.getElementById('hist_edit_manager_id').value = r.manager_id;
+  document.getElementById('hist_edit_product_id').value = r.product_id;
+  document.getElementById('hist_edit_period').value = r.period;
+  document.getElementById('hist_edit_amount').value = r.amount;
+  document.getElementById('hist_edit_note').value = r.note||'';
+  document.getElementById('histEditModal').style.display = 'flex';
+}
+
+async function saveHistEdit() {
+  const manager_id = Number(document.getElementById('hist_edit_manager_id').value);
+  const product_id = Number(document.getElementById('hist_edit_product_id').value);
+  const period     = document.getElementById('hist_edit_period').value;
+  const amount     = Number(document.getElementById('hist_edit_amount').value) || 0;
+  const note       = document.getElementById('hist_edit_note').value;
+
+  const res = await apiPost('/sales', { manager_id, product_id, period, amount, note });
+  if (res && res.success) {
+    document.getElementById('histEditModal').style.display = 'none';
+    toast('매출이 수정됐습니다');
+    loadHistory();
+  } else { toast('저장 실패', 'err'); }
+}
+
+// ── 초기화 ──────────────────────────────────────────────────
+buildPeriods();
 loadDashboard();
 </script>
 </body>
