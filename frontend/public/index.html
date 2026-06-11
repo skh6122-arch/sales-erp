@@ -215,7 +215,7 @@ textarea.form-input{resize:vertical;min-height:80px;font-family:inherit}
         </div>
         <div class="card">
           <table>
-            <thead><tr><th>이름</th><th>팀</th><th>월 목표(만원)</th><th>색상</th><th>상태</th><th style="width:120px">작업</th></tr></thead>
+            <thead><tr><th>이름</th><th>팀</th><th>월 목표(원)</th><th>색상</th><th>상태</th><th style="width:120px">작업</th></tr></thead>
             <tbody id="mgr-table"></tbody>
           </table>
         </div>
@@ -285,7 +285,7 @@ textarea.form-input{resize:vertical;min-height:80px;font-family:inherit}
             <span id="hist-total" style="font-size:12px;color:#0F6E56;font-weight:500"></span>
           </div>
           <table>
-            <thead><tr><th>월</th><th>팀장</th><th>상품</th><th>매출(만원)</th><th>메모</th><th style="width:80px">작업</th></tr></thead>
+            <thead><tr><th>월</th><th>팀장</th><th>상품</th><th>매출(원)</th><th>메모</th><th style="width:80px">작업</th></tr></thead>
             <tbody id="hist-table"></tbody>
           </table>
         </div>
@@ -308,7 +308,7 @@ textarea.form-input{resize:vertical;min-height:80px;font-family:inherit}
     <div class="form-group"><label class="form-label">관련 상품</label><select class="form-input" id="log_product_id"></select></div>
     <div class="form-group"><label class="form-label">활동 내용</label><textarea class="form-input" id="log_content" placeholder="활동 내용을 입력하세요..."></textarea></div>
     <div class="form-group"><label class="form-label">다음 액션</label><input type="text" class="form-input" id="log_next" placeholder="예: 다음주 제안서 발송"></div>
-    <div class="form-group"><label class="form-label">예상 매출 (만원)</label><input type="number" class="form-input" id="log_amount" placeholder="0"></div>
+    <div class="form-group"><label class="form-label">예상 매출 (원)</label><input type="number" class="form-input" id="log_amount" placeholder="0"></div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
       <button class="btn" onclick="document.getElementById('logModal').style.display='none'">취소</button>
       <button class="btn primary" onclick="saveLog()"><i class="ti ti-check"></i> 저장</button>
@@ -325,7 +325,7 @@ textarea.form-input{resize:vertical;min-height:80px;font-family:inherit}
       <div><label class="form-label">이름 *</label><input type="text" class="form-input" id="mgr_name" placeholder="홍길동"></div>
       <div><label class="form-label">팀 *</label><input type="text" class="form-input" id="mgr_team" placeholder="영업1팀"></div>
     </div>
-    <div class="form-group"><label class="form-label">월 목표 매출 (만원)</label><input type="number" class="form-input" id="mgr_target" placeholder="0"></div>
+    <div class="form-group"><label class="form-label">월 목표 매출 (원)</label><input type="number" class="form-input" id="mgr_target" placeholder="0"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
       <div><label class="form-label">아바타 텍스트 색상</label><input type="color" class="form-input" id="mgr_color" value="#378ADD" style="height:38px;padding:2px"></div>
       <div><label class="form-label">아바타 배경 색상</label><input type="color" class="form-input" id="mgr_bg_color" value="#E6F1FB" style="height:38px;padding:2px"></div>
@@ -378,7 +378,7 @@ textarea.form-input{resize:vertical;min-height:80px;font-family:inherit}
     <input type="hidden" id="hist_edit_manager_id">
     <input type="hidden" id="hist_edit_product_id">
     <input type="hidden" id="hist_edit_period">
-    <div class="form-group"><label class="form-label">매출 금액 (만원) *</label><input type="number" class="form-input" id="hist_edit_amount" placeholder="0"></div>
+    <div class="form-group"><label class="form-label">매출 금액 (원) *</label><input type="number" class="form-input" id="hist_edit_amount" placeholder="0"></div>
     <div class="form-group"><label class="form-label">메모</label><input type="text" class="form-input" id="hist_edit_note" placeholder="메모"></div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
       <button class="btn" onclick="document.getElementById('histEditModal').style.display='none'">취소</button>
@@ -505,7 +505,7 @@ function nav(view, el) {
 
 function onPeriodChange(v) { currentPeriod = v; loadDashboard(); }
 
-function fmt(n) { return n >= 10000 ? (n/10000).toFixed(1)+'억' : (n/1000).toFixed(1)+'천만'; }
+function fmt(n) { if(!n) return '0'; return Math.round(n).toLocaleString('ko-KR'); }
 function rateBadge(cur, prev) {
   if (!prev) return '<span class="badge nm">-</span>';
   const d = ((cur-prev)/prev*100).toFixed(1);
@@ -519,10 +519,10 @@ async function loadDashboard() {
   const { summary, managers: mgrs, trend, byType } = res.data;
 
   document.getElementById('db-metrics').innerHTML = `
-    <div class="mc"><div class="mc-label">당월 총 매출</div><div class="mc-value">₩${fmt(summary.total_current)}</div><div class="mc-sub ${summary.mom_rate>=0?'up':'down'}">${summary.mom_rate>=0?'▲':'▼'}${Math.abs(summary.mom_rate)}% 전월 대비</div></div>
+    <div class="mc"><div class="mc-label">당월 총 매출</div><div class="mc-value" style="font-size:17px">₩${fmt(summary.total_current)}</div><div class="mc-sub ${summary.mom_rate>=0?'up':'down'}">${summary.mom_rate>=0?'▲':'▼'}${Math.abs(summary.mom_rate)}% 전월 대비</div></div>
     <div class="mc"><div class="mc-label">전년 동월 대비</div><div class="mc-value">${summary.yoy_rate>=0?'+':''}${summary.yoy_rate}%</div><div class="mc-sub nm">전년 ₩${fmt(summary.total_yoy)}</div></div>
     <div class="mc"><div class="mc-label">관리상품 유지율</div><div class="mc-value">${summary.maintain_rate}%</div><div class="mc-sub nm">${summary.active_count}/${summary.total_count}개 유지</div></div>
-    <div class="mc"><div class="mc-label">종료상품 미발생분</div><div class="mc-value">₩${fmt(summary.total_missed)}</div><div class="mc-sub down">${summary.missed_count}건 종료</div></div>
+    <div class="mc"><div class="mc-label">종료상품 미발생분</div><div class="mc-value" style="font-size:17px">₩${fmt(summary.total_missed)}</div><div class="mc-sub down">${summary.missed_count}건 종료</div></div>
   `;
 
   document.getElementById('rank-table').innerHTML = mgrs.map((m,i) => `
@@ -539,8 +539,8 @@ async function loadDashboard() {
   if (charts.trend) charts.trend.destroy();
   charts.trend = new Chart(document.getElementById('trendChart'), {
     type:'line',
-    data:{ labels: trend.map(t=>t.period.slice(5)+'월'), datasets:[{ label:'매출', data: trend.map(t=>t.total/10000), borderColor:'#378ADD', backgroundColor:'rgba(55,138,221,.08)', fill:true, tension:.35, pointRadius:3 }]},
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{callback:v=>v+'억'}, grid:{color:'rgba(0,0,0,.05)'}}}}
+    data:{ labels: trend.map(t=>t.period.slice(5)+'월'), datasets:[{ label:'매출', data: trend.map(t=>t.total), borderColor:'#378ADD', backgroundColor:'rgba(55,138,221,.08)', fill:true, tension:.35, pointRadius:3 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{callback:v=>v.toLocaleString()}, grid:{color:'rgba(0,0,0,.05)'}}}}
   });
 
   if (charts.type) charts.type.destroy();
@@ -576,7 +576,7 @@ async function showMgrDetail(id, el) {
   const rate = sm.target ? (sm.current_sales/sm.target*100).toFixed(0) : 0;
   document.getElementById('perf-detail').innerHTML = `
     <div class="g4" style="margin-bottom:16px">
-      <div class="mc"><div class="mc-label">당월 매출</div><div class="mc-value">₩${fmt(sm.current_sales||0)}</div><div class="mc-sub ${mom>=0?'up':'down'}">${mom!==null?(mom>=0?'▲':'▼')+Math.abs(mom)+'% 전월대비':'데이터없음'}</div></div>
+      <div class="mc"><div class="mc-label">당월 매출</div><div class="mc-value" style="font-size:16px">₩${fmt(sm.current_sales||0)}</div><div class="mc-sub ${mom>=0?'up':'down'}">${mom!==null?(mom>=0?'▲':'▼')+Math.abs(mom)+'% 전월대비':'데이터없음'}</div></div>
       <div class="mc"><div class="mc-label">목표 달성률</div><div class="mc-value">${rate}%</div><div class="mc-sub nm">목표 ₩${fmt(sm.target||0)}</div></div>
       <div class="mc"><div class="mc-label">전년 대비</div><div class="mc-value">${yoy!==null?(yoy>=0?'+':'')+yoy+'%':'–'}</div><div class="mc-sub nm">전년 ₩${fmt(sm.yoy_sales||0)}</div></div>
       <div class="mc"><div class="mc-label">이달 활동</div><div class="mc-value">${m.logs.length}건</div><div class="mc-sub nm">계약 ${m.logs.filter(l=>l.type==='계약').length}건</div></div>
@@ -975,51 +975,48 @@ async function loadAdminSales() {
   }
 
   // 현재 매출 데이터를 별도 API로 가져오기 (product별 current_sales 활용)
+  // 저장에 필요한 데이터를 전역 변수로 보관 (innerHTML 교체시 dataset 소실 방지)
+  window._salesCtx = { mgrId: Number(mgrId), period, prodIds: myProds.map(p=>p.id) };
+
   const rows = myProds.map(p => `
     <tr>
       <td style="font-weight:500">${p.name}</td>
       <td><span class="badge ${p.type}">${p.type==='regular'?'상시':'시즌'}</span></td>
       <td><span class="badge ${p.status}">${p.status==='active'?'유지':'종료'}</span></td>
-      <td style="width:160px">
+      <td style="width:200px">
         <input type="number" class="sales-card-input" 
           id="sales_input_${p.id}" 
           value="${p.current_sales || 0}"
-          placeholder="0" style="width:120px">
-        <span style="font-size:11px;color:#888;margin-left:4px">만원</span>
+          placeholder="0" style="width:150px">
+        <span style="font-size:11px;color:#888;margin-left:4px">원</span>
       </td>
       <td style="font-size:11px;color:#888">
-        전월: ${p.prev_sales ? p.prev_sales.toLocaleString()+'만' : '–'}
+        전월: ${p.prev_sales ? '₩'+fmt(p.prev_sales) : '–'}
       </td>
     </tr>`).join('');
 
   document.getElementById('sales-admin-body').innerHTML = `
     <table>
-      <thead><tr><th>상품명</th><th>구분</th><th>상태</th><th>매출 (만원)</th><th>참고</th></tr></thead>
+      <thead><tr><th>상품명</th><th>구분</th><th>상태</th><th>매출 (원)</th><th>참고</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
-
-  // 저장 버튼에 필요한 데이터 저장
-  document.getElementById('sales-admin-body').dataset.mgrId = mgrId;
-  document.getElementById('sales-admin-body').dataset.period = period;
-  document.getElementById('sales-admin-body').dataset.prodIds = myProds.map(p=>p.id).join(',');
 }
 
 async function saveAllSales() {
-  const body_el = document.getElementById('sales-admin-body');
-  const mgrId   = Number(body_el.dataset.mgrId);
-  const period  = body_el.dataset.period;
-  const prodIds = (body_el.dataset.prodIds||'').split(',').filter(Boolean).map(Number);
-  if (!mgrId || !period || !prodIds.length) { toast('먼저 팀장을 선택하세요', 'err'); return; }
-
+  const ctx = window._salesCtx;
+  if (!ctx || !ctx.mgrId || !ctx.period || !ctx.prodIds || !ctx.prodIds.length) {
+    toast('먼저 팀장을 선택하세요', 'err'); return;
+  }
   let saved = 0;
-  for (const pid of prodIds) {
+  for (const pid of ctx.prodIds) {
     const el = document.getElementById(`sales_input_${pid}`);
     if (!el) continue;
     const amount = Number(el.value) || 0;
-    const res = await apiPost('/sales', { manager_id: mgrId, product_id: pid, period, amount });
+    const res = await apiPost('/sales', { manager_id: ctx.mgrId, product_id: pid, period: ctx.period, amount });
     if (res && res.success) saved++;
   }
   toast(`${saved}건 매출이 저장됐습니다`);
+  loadAdminSales(); // 저장 후 새로고침
 }
 
 
@@ -1039,45 +1036,47 @@ async function loadHistory() {
   const period = document.getElementById('hist-period').value;
   const mgrId  = document.getElementById('hist-mgr').value;
 
-  // monthly_sales를 dashboard API로 간접 조회 → 더 직접적인 방법 없으므로
-  // products + dashboard 조합으로 재현
-  const [pRes, dRes] = await Promise.all([
+  const [pRes, mRes] = await Promise.all([
     apiFetch('/products?period=' + period),
-    apiFetch('/sales/dashboard?period=' + period)
+    apiFetch('/managers?period=' + period)
   ]);
-  if (!pRes || !dRes) return;
+  if (!pRes || !mRes) return;
 
   const allProds = pRes.data;
-  const mgrs = dRes.data.managers;
+  const allMgrs  = mRes.data;
 
-  // 각 팀장·상품 조합으로 매출 재구성
+  // 전체 상품 순회하여 매출 데이터 구성
   let rows = [];
-  for (const m of mgrs) {
+  for (const p of allProds) {
+    if (p.current_sales === 0 && p.prev_sales === 0) continue; // 데이터 없는 상품 제외
+    const m = allMgrs.find(x => x.id === p.manager_id) || { id: null, name: '미지정', team: '', color:'#888', bg_color:'#eee' };
     if (mgrId && m.id !== Number(mgrId)) continue;
-    const myProds = allProds.filter(p => p.manager_id === m.id);
-    for (const p of myProds) {
-      if (p.current_sales > 0 || !mgrId) {
-        rows.push({ manager_id: m.id, manager_name: m.name, manager_team: m.team, manager_color: m.color, manager_bg: m.bg_color, product_id: p.id, product_name: p.name, product_type: p.type, period, amount: p.current_sales || 0, note: '' });
-      }
+    if (p.current_sales > 0 || !mgrId) {
+      rows.push({
+        manager_id: m.id, manager_name: m.name, manager_team: m.team,
+        manager_color: m.color, manager_bg: m.bg_color,
+        product_id: p.id, product_name: p.name, product_type: p.type,
+        period, amount: p.current_sales || 0, note: ''
+      });
     }
   }
 
   historyData = rows;
   document.getElementById('hist-title').textContent = `${period} 매출 이력`;
-  const total = rows.reduce((s,r)=>s+r.amount,0);
-  document.getElementById('hist-total').textContent = total ? `합계: ${total.toLocaleString()}만원` : '';
+  const total = rows.reduce((s,r) => s + r.amount, 0);
+  document.getElementById('hist-total').textContent = total ? `합계: ₩${fmt(total)}` : '';
 
   const tbody = document.getElementById('hist-table');
-  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty" style="padding:24px">데이터가 없습니다</td></tr>'; return; }
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty" style="padding:24px">해당 월에 매출 데이터가 없습니다</td></tr>'; return; }
   tbody.innerHTML = rows.map((r,i) => `
     <tr>
       <td><span class="badge nm">${r.period}</span></td>
       <td><div style="display:flex;align-items:center;gap:6px">
         <div class="avatar" style="background:${r.manager_bg||'#E6F1FB'};color:${r.manager_color||'#185FA5'};width:24px;height:24px;font-size:9px">${r.manager_name.slice(0,2)}</div>
-        ${r.manager_name} (${r.manager_team})
+        ${r.manager_name}${r.manager_team ? ' ('+r.manager_team+')' : ''}
       </div></td>
       <td><span class="badge ${r.product_type}">${r.product_type==='regular'?'상시':'시즌'}</span> ${r.product_name}</td>
-      <td style="font-weight:500;color:${r.amount>0?'#0F6E56':'#999'}">${r.amount.toLocaleString()}</td>
+      <td style="font-weight:500;color:${r.amount>0?'#0F6E56':'#999'}">₩${fmt(r.amount)}</td>
       <td style="color:#888;font-size:11px">${r.note||'–'}</td>
       <td>
         <button class="btn sm" onclick="openHistEdit(${i})"><i class="ti ti-edit"></i></button>
